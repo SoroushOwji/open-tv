@@ -1,6 +1,5 @@
 // filepath: /Users/Soroush/Documents/code/open-tv/src/pages/ShowDetails.vue
 <script setup lang="ts">
-import { onMounted, ref } from "vue";
 import { useRoute } from "vue-router";
 import type { Show } from "../types";
 import { useFetch } from "../hooks";
@@ -40,7 +39,9 @@ console.log({ data, error, isLoading });
           <p class="text-gray-400 mb-4">
             {{ data.schedule.time }} - {{ data.schedule.days.join(", ") }}
           </p>
-          <div class="absolute top-4 right-4 p-4 bg-red-500 rounded-full">
+          <div
+            class="absolute w-12 h-12 font-bold flex justify-around items-center top-4 right-4 bg-red-500 rounded-full text-sm"
+          >
             {{ data.rating.average }}
           </div>
         </div>
