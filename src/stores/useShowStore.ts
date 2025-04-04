@@ -78,6 +78,7 @@ export const useShowStore = defineStore("useShowStore", {
       handleDebounceInput(value);
     },
     resetSearchInput() {
+      //TODO: use a button to reset the search input
       this.searchInput = "";
       this.updateSearchInput("");
     },
@@ -85,6 +86,13 @@ export const useShowStore = defineStore("useShowStore", {
       if (!this.shows.length) {
         this.fetchShowDetail(id);
         this.fetchShows();
+        return;
+      }
+      const show = this.shows.find((show) => show.id === Number(id));
+      if (!show) {
+        this.fetchShowDetail(id);
+        this.fetchShows();
+        return;
       }
       this.showDetail =
         this.shows.find((show) => show.id === Number(id)) ?? null;

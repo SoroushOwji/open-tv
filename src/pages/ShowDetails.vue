@@ -59,7 +59,19 @@ onMounted(() => {
         <p class="my-4" v-html="show.summary"></p>
         <p>Language: {{ show.language }}</p>
         <p>Premiered: {{ show.premiered }}</p>
-        <p>Rating: {{ show.rating.average }}</p>
+        <p v-if="show.officialSite">
+          Official Site:
+          <a :href="show.officialSite" target="_blank">{{
+            show.officialSite
+          }}</a>
+        </p>
+        <p>url {{ show.url }}</p>
+        <p>type {{ show.type }}</p>
+        <p>status {{ show.status }}</p>
+        <p>runtime {{ show.runtime }}</p>
+        <p>averageRuntime {{ show.averageRuntime }}</p>
+        <p>premiered {{ show.premiered }}</p>
+        <p>ended {{ show.ended }}</p>
       </div>
     </div>
   </div>
