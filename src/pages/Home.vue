@@ -5,14 +5,21 @@ import { storeToRefs } from "pinia";
 
 const showStore = useShowStore();
 const {
-  searchInput,
-  filteredShows,
-  genres,
   filteredGenres,
+  filteredShows,
   showsByGenre,
   isLoading,
   error,
+  searchInput,
 } = storeToRefs(showStore);
+
+import { onMounted } from "vue";
+
+onMounted(() => {
+  if (showStore.shows.length === 0) {
+    showStore.fetchShows();
+  }
+});
 </script>
 
 <template>
@@ -21,6 +28,7 @@ const {
     <div class="p-4">
       <input
         v-model="searchInput"
+        @input="(event) => showStore.updateSearchInput((event.target as HTMLInputElement)?.value)"
         type="text"
         placeholder="Search for a show..."
         class="w-full p-2 border border-gray-300 rounded"
@@ -31,16 +39,10 @@ const {
     <div v-else>
       <div v-if="searchInput">
         <show-list title="Search Results" :list="filteredShows" />
+      </div>
+      <div>
         <show-list
           v-for="genre in filteredGenres"
-          :key="genre"
-          :list="showsByGenre[genre]"
-          :title="genre"
-        />
-      </div>
-      <div v-else>
-        <show-list
-          v-for="genre in genres"
           :key="genre"
           :list="showsByGenre[genre]"
           :title="genre"

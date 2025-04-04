@@ -1,91 +1,110 @@
 import { defineStore } from "pinia";
-import { ref, computed, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { debounce } from "../utils";
 import type { Show } from "../types";
-import { useFetch } from "../hooks";
 
-// async function fetchData<T>(url: string, options?: RequestInit) {}
+export const useShowStore = defineStore("useShowStore", {
+  state: () => {
+    const route = useRoute();
+    const router = useRouter();
+    const searchParam = (route.query.search as string) || "";
 
-export const useShowStore = defineStore("showStore", () => {
-  const router = useRouter();
-  const route = useRoute();
+    const state = {
+      searchInput: searchParam,
+      debouncedSearchInput: searchParam,
+      route,
+      router,
+      shows: [] as Show[],
+      error: null as Error | null,
+      isLoading: false,
+      genres: [] as string[],
+      showsByGenre: {} as Record<string, Show[]>,
+      isShowDetailLoading: false,
+      showDetailError: null as Error | null,
+      showDetail: null as Show | null,
+    };
 
-  // State
-  const searchParam = (route.query.search as string) || "";
-  const searchInput = ref(searchParam);
-  const searchDebounced = ref(searchParam);
+    return state;
+  },
+  actions: {
+    async fetchShows() {
+      this.isLoading = true;
+      this.error = null;
 
-  const { data, error, isLoading } = useFetch<Show[]>(
-    "http://api.tvmaze.com/shows"
-  );
+      try {
+        const response = await fetch("http://api.tvmaze.com/shows");
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        this.shows = await response.json();
+        this.genres = Array.from(
+          new Set(this.shows.flatMap((show) => show.genres))
+        );
+        this.showsByGenre = this.genres.reduce((acc, genre) => {
+          acc[genre] = this.shows
+            .filter((show) => show.genres.includes(genre))
+            .sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0));
+          return acc;
+        }, {} as Record<string, Show[]>);
+      } catch (err) {
+        this.error = err as Error;
+      } finally {
+        this.isLoading = false;
+      }
+    },
+    async fetchShowDetail(id: string) {
+      this.isShowDetailLoading = true;
+      this.showDetailError = null;
 
-  // Getter function to find a show by ID
-  const getShowById = (id: number) => {
-    let show;
-    if (!id) return { error: "No ID provided" };
-    if (data.value) {
-      show = data.value.find((show) => show.id === id);
-      if (show) return { data: show };
-    }
+      try {
+        const response = await fetch(`http://api.tvmaze.com/shows/${id}`);
+        if (!response.ok) {
+          throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+        this.showDetail = await response.json();
+      } catch (err) {
+        this.showDetailError = err as Error;
+      } finally {
+        this.isShowDetailLoading = false;
+      }
+    },
+    updateSearchInput(value: string) {
+      this.$state.router.replace({
+        query: { ...this.$state.route.query, search: value },
+      });
+      const handleDebounceInput = debounce((newValue: string) => {
+        this.debouncedSearchInput = newValue;
+      }, 300);
+      handleDebounceInput(value);
+    },
+    resetSearchInput() {
+      this.searchInput = "";
+      this.updateSearchInput("");
+    },
+    getShowById(id: string) {
+      if (!this.shows.length) {
+        this.fetchShowDetail(id);
+        this.fetchShows();
+      }
+      this.showDetail =
+        this.shows.find((show) => show.id === Number(id)) ?? null;
+    },
+  },
 
-    if (!data.value) {
-      return useFetch<Show>(`http://api.tvmaze.com/shows/${id}`);
-    }
-
-    return { error: "Show not found" };
-  };
-
-  // Debounced search update
-  const updateSearchDebounced = debounce((value: string) => {
-    searchDebounced.value = value;
-    router.replace({ query: { ...route.query, search: value || undefined } });
-  }, 300);
-
-  watch(searchInput, (newValue) => {
-    updateSearchDebounced(newValue);
-  });
-
-  // Computed properties
-  const filteredShows = computed(() => {
-    if (!searchDebounced.value || !data.value) return [] as Show[];
-    return data.value.filter((show) =>
-      show.name.toLowerCase().includes(searchDebounced.value.toLowerCase())
-    );
-  });
-
-  const genres = computed(() => {
-    const allGenres = data.value?.flatMap((show) => show.genres) || [];
-    return Array.from(new Set(allGenres));
-  });
-
-  const filteredGenres = computed(() => {
-    if (!searchDebounced.value) return genres.value;
-    return genres.value.filter((genre) =>
-      genre.toLowerCase().includes(searchDebounced.value.toLowerCase())
-    );
-  });
-
-  const showsByGenre = computed(() => {
-    return genres.value.reduce((acc, genre) => {
-      if (!data.value) return acc;
-      acc[genre] = data.value
-        .filter((show) => show.genres.includes(genre))
-        .sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0));
-      return acc;
-    }, {} as Record<string, Show[]>);
-  });
-
-  // Expose state and computed properties
-  return {
-    searchInput,
-    searchDebounced,
-    data,
-    error,
-    isLoading,
-    filteredShows,
-    genres,
-    filteredGenres,
-    showsByGenre,
-  };
+  getters: {
+    filteredShows: (state) => {
+      if (!state.debouncedSearchInput) return [] as Show[];
+      return state.shows.filter((show) =>
+        show.name
+          .toLowerCase()
+          .includes(state.debouncedSearchInput.toLowerCase())
+      );
+    },
+    filteredGenres: (state) => {
+      if (!state.debouncedSearchInput) return state.genres;
+      return state.genres.filter((genre) =>
+        genre.toLowerCase().includes(state.debouncedSearchInput.toLowerCase())
+      );
+    },
+  },
 });
