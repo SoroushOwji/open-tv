@@ -2,6 +2,7 @@
 import ShowList from "../components/ShowList.vue";
 import { useShowStore } from "../stores/useShowStore";
 import { storeToRefs } from "pinia";
+import { onMounted } from "vue";
 
 const showStore = useShowStore();
 const {
@@ -13,8 +14,6 @@ const {
   searchInput,
 } = storeToRefs(showStore);
 
-import { onMounted } from "vue";
-
 onMounted(() => {
   if (showStore.shows.length === 0) {
     showStore.fetchShows();
@@ -23,21 +22,20 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="bg-black text-white min-h-screen">
-    <h1 class="text-5xl font-extrabold p-4">TV Shows</h1>
+  <main class="dark:bg-gray-900 dark:text-white min-h-screen mt-15">
     <div class="p-4">
       <input
         v-model="searchInput"
         @input="(event) => showStore.updateSearchInput((event.target as HTMLInputElement)?.value)"
         type="text"
-        placeholder="Search for a show..."
+        placeholder="Search based on name or genre..."
         class="w-full p-2 border border-gray-300 rounded"
       />
     </div>
     <div v-if="isLoading">Loading...</div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else>
-      <div v-if="searchInput">
+      <div v-if="filteredShows.length">
         <show-list title="Search Results" :list="filteredShows" />
       </div>
       <div>

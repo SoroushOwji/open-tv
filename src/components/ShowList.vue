@@ -10,10 +10,10 @@ defineProps<{
 </script>
 
 <template>
-  <section class="p-4">
-    <h2 class="text-3xl font-bold">{{ title }}</h2>
+  <section class="">
+    <h2 class="text-3xl font-bold p-4">{{ title }}</h2>
     <div class="w-full overflow-x-auto">
-      <div class="flex gap-4 w-max">
+      <div class="flex gap-4 w-max px-4">
         <show-card
           v-if="list.length"
           v-for="show in list"

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Show } from "../types";
+import Rating from "./Rating.vue";
 
 defineProps<{
   show: Show;
@@ -14,13 +15,16 @@ defineProps<{
     <img width="240px" :src="show.image?.medium" :alt="show.name" />
 
     <div
-      class="absolute p-4 inset-0 bg-black/80 bg-opacity-75 text-white flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+      class="absolute p-4 inset-0 bg-white/80 dark:bg-black/80 bg-opacity-75 dark:text-white flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
     >
       <h2 class="text-lg font-bold">{{ show.name }}</h2>
-      <div
-        class="absolute text-xs font-bold top-4 right-4 rounded-full bg-red-500 text-white h-8 w-8 flex justify-center items-center"
-      >
-        {{ show.rating.average }}
+      <div class="absolute top-4 right-4">
+        <rating
+          v-if="show.rating.average"
+          :value="show.rating.average"
+          size="small"
+          class="mb-4"
+        />
       </div>
       <div class="flex flex-wrap gap-2 mt-2 justify-center">
         <div
@@ -31,19 +35,9 @@ defineProps<{
           {{ genre }}
         </div>
       </div>
-      <p class="text-sm mt-2">
-        {{
-          show.summary
-            ? show.summary
-                .replace(/<[^>]+>/g, "")
-                .split(" ")
-                .slice(0, 15)
-                .join(" ") + "..."
-            : ""
-        }}
+      <p v-if="show.summary" class="text-sm mt-2 line-clamp-2 text-center">
+        {{ show.summary.replace(/<[^>]+>/g, "") }}
       </p>
     </div>
   </router-link>
 </template>
-
-<style scoped></style>
