@@ -40,7 +40,10 @@ onMounted(() => {
         &#x2715;
       </button>
     </div>
-    <div v-if="isLoading">Loading...</div>
+    <div v-if="isLoading">
+      <show-list loading title="Loading..." :list="[]" />
+      <show-list loading title="Loading..." :list="[]" />
+    </div>
     <div v-else-if="error">{{ error }}</div>
     <div v-else>
       <div v-if="filteredShows.length">
