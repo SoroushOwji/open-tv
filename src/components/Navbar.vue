@@ -18,9 +18,15 @@ onMounted(() => {
 
 <template>
   <div
-    class="flex items-center h-15 fixed top-0 left-0 right-0 bg-white dark:bg-gray-800 shadow-md"
+    class="flex items-center h-15 justify-between fixed top-0 left-0 right-0 bg-white dark:bg-gray-900 shadow-md z-10"
   >
-    <label for="theme-toggle" class="flex items-center cursor-pointer">
+    <router-link to="/" class="flex items-center">
+      <img src="../assets/icon.svg" alt="Logo" class="h-10 w-10 ml-4" />
+      <h1 class="text-xl font-bold text-gray-800 dark:text-white ml-2">
+        Open TV
+      </h1>
+    </router-link>
+    <label for="theme-toggle" class="flex items-center cursor-pointer px-4">
       <span class="mr-3 text-sm"> </span>
       <div class="relative">
         <input

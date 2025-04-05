@@ -4,6 +4,7 @@ import { storeToRefs } from "pinia";
 import { onMounted } from "vue";
 import { useShowStore } from "../stores/useShowStore";
 import Rating from "../components/Rating.vue";
+import TagLabel from "../components/TagLabel.vue";
 
 const route = useRoute();
 const id = route.params.id;
@@ -17,25 +18,30 @@ onMounted(() => {
 </script>
 
 <template>
-  <main class="min-h-screen flex flex-col justify-center">
+  <main class="min-h-screen">
     <div v-if="error">{{ error }}</div>
     <div v-else-if="!show">Loading...</div>
-    <div v-else class="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-8">
-      <div class="col-span-1">
-        <div
-          class="w-full h-screen bg-cover bg-center fixed top-0 left-0 -z-1"
-          :style="
-            show.image
-              ? `background-image: url(${show.image.original}); background-position: 0% 25%;`
-              : 'background-image: url(https://via.placeholder.com/210x295?text=No+Image+Available)'
-          "
-          aria-label="Show Image"
-        ></div>
-      </div>
+    <div v-else class="relative grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
+      <div
+        class="fixed inset-0 bg-cover bg-center -z-1"
+        :style="
+          show.image
+            ? `background-image: url(${show.image.original}); background-position: 0% 25%;`
+            : 'background-image: url(https://via.placeholder.com/210x295?text=No+Image+Available)'
+        "
+        aria-label="Show Image"
+      ></div>
       <article
-        class="col-span-1 sm:col-span-2 lg:col-span-3 p-8 bg-white/85 rounded-3xl dark:bg-black/85 dark:text-white relative top-[30vh] m-4 sm:top-0"
+        class="relative col-start-2 col-span-1 md:col-start-2 md:col-span-2 lg:col-start-2 lg:col-span-3 mx-4 p-8 bg-white/85 rounded-3xl dark:bg-black/85 dark:text-white top-[30vh]"
       >
         <div>
+          <button
+            @click="$router.back()"
+            class="mb-4 cursor-pointer text-gray-500"
+            aria-label="Back to previous page"
+          >
+            ← Back
+          </button>
           <h1 class="text-3xl font-bold mb-2">
             {{ show.name }}
           </h1>
@@ -51,24 +57,11 @@ onMounted(() => {
             ></rating>
           </div>
         </div>
-        <span
-          class="bg-white text-black text-xs font-bold rounded px-2 mr-2"
-          v-for="genre in show.genres"
-          :key="genre"
-        >
-          {{ genre }}
-        </span>
-
-        <p class="my-4" v-html="show.summary"></p>
-
         <p>Language: {{ show.language }}</p>
-        <p>Premiered: {{ show.premiered }}</p>
-        <p v-if="show.officialSite">
-          Official Site:
-          <a :href="show.officialSite" target="_blank">{{
-            show.officialSite
-          }}</a>
-        </p>
+        <div class="flex flex-wrap gap-2 mt-2">
+          <tag-label v-for="genre in show.genres" :key="genre" :text="genre" />
+        </div>
+        <p class="my-4" v-html="show.summary"></p>
       </article>
     </div>
   </main>

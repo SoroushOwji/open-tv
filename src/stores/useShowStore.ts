@@ -40,10 +40,13 @@ export const useShowStore = defineStore("useShowStore", {
         this.genres = Array.from(
           new Set(this.shows.flatMap((show) => show.genres))
         );
+        const sortedShows = this.shows.sort(
+          (a, b) => (b.rating.average || 0) - (a.rating.average || 0)
+        );
         this.showsByGenre = this.genres.reduce((acc, genre) => {
-          acc[genre] = this.shows
-            .filter((show) => show.genres.includes(genre))
-            .sort((a, b) => (b.rating.average || 0) - (a.rating.average || 0));
+          acc[genre] = sortedShows.filter((show) =>
+            show.genres.includes(genre)
+          );
           return acc;
         }, {} as Record<string, Show[]>);
       } catch (err) {
@@ -78,7 +81,6 @@ export const useShowStore = defineStore("useShowStore", {
       handleDebounceInput(value);
     },
     resetSearchInput() {
-      //TODO: use a button to reset the search input
       this.searchInput = "";
       this.updateSearchInput("");
     },

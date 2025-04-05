@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Show } from "../types";
 import Rating from "./Rating.vue";
+import TagLabel from "./TagLabel.vue";
 
 defineProps<{
   show: Show;
@@ -27,13 +28,7 @@ defineProps<{
         />
       </div>
       <div class="flex flex-wrap gap-2 mt-2 justify-center">
-        <div
-          class="bg-white text-black text-xs font-bold rounded px-2"
-          v-for="genre in show.genres"
-          :key="genre"
-        >
-          {{ genre }}
-        </div>
+        <tag-label v-for="genre in show.genres" :key="genre" :text="genre" />
       </div>
       <p v-if="show.summary" class="text-sm mt-2 line-clamp-2 text-center">
         {{ show.summary.replace(/<[^>]+>/g, "") }}
