@@ -1,32 +1,27 @@
 import { defineStore } from "pinia";
-import { useRouter, useRoute } from "vue-router";
 import { debounce } from "../utils";
 import type { Show } from "../types";
+import { type RouteLocationNormalizedLoaded, type Router } from "vue-router";
 
 export const useShowStore = defineStore("useShowStore", {
-  state: () => {
-    const route = useRoute();
-    const router = useRouter();
-    const searchParam = (route.query.search as string) || "";
-
-    const state = {
-      searchInput: searchParam,
-      debouncedSearchInput: searchParam,
-      route,
-      router,
-      shows: [] as Show[],
-      error: null as Error | null,
-      isLoading: false,
-      genres: [] as string[],
-      showsByGenre: {} as Record<string, Show[]>,
-      isShowDetailLoading: false,
-      showDetailError: null as Error | null,
-      showDetail: null as Show | null,
-    };
-
-    return state;
-  },
+  state: () => ({
+    searchInput: "",
+    debouncedSearchInput: "",
+    shows: [] as Show[],
+    error: null as Error | null,
+    isLoading: false,
+    genres: [] as string[],
+    showsByGenre: {} as Record<string, Show[]>,
+    isShowDetailLoading: false,
+    showDetailError: null as Error | null,
+    showDetail: null as Show | null,
+  }),
   actions: {
+    initializeSearchInput(route: RouteLocationNormalizedLoaded) {
+      const searchParam = (route?.query?.search as string) || "";
+      this.searchInput = searchParam;
+      this.debouncedSearchInput = searchParam;
+    },
     async fetchShows() {
       this.isLoading = true;
       this.error = null;
@@ -71,18 +66,18 @@ export const useShowStore = defineStore("useShowStore", {
         this.isShowDetailLoading = false;
       }
     },
-    updateSearchInput(value: string) {
-      this.$state.router.replace({
-        query: { ...this.$state.route.query, search: value },
+    updateSearchInput(value: string, router: Router) {
+      router.replace({
+        query: { ...router.currentRoute.value.query, search: value },
       });
       const handleDebounceInput = debounce((newValue: string) => {
         this.debouncedSearchInput = newValue;
       }, 300);
       handleDebounceInput(value);
     },
-    resetSearchInput() {
+    resetSearchInput(router: Router) {
       this.searchInput = "";
-      this.updateSearchInput("");
+      this.updateSearchInput("", router);
     },
     getShowById(id: string) {
       if (!this.shows.length) {

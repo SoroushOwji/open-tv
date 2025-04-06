@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import type { Show } from "../types";
 import ShowCard from "./ShowCard.vue";
-import { defineProps } from "vue";
 
 defineProps<{
   list: Show[];
@@ -23,7 +22,7 @@ defineProps<{
       <div class="flex gap-4 w-max px-4">
         <div
           v-if="loading"
-          v-for="i in 5"
+          v-for="i in 10"
           :key="i"
           class="animate-pulse w-60 h-84 border bg-gray-200 border-gray-300 rounded-xl flex flex-col justify-between p-4"
         >

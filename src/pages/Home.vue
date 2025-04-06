@@ -3,6 +3,7 @@ import ShowList from "../components/ShowList.vue";
 import { useShowStore } from "../stores/useShowStore";
 import { storeToRefs } from "pinia";
 import { onMounted } from "vue";
+import { useRoute, useRouter } from "vue-router";
 
 const showStore = useShowStore();
 const {
@@ -14,11 +15,23 @@ const {
   searchInput,
 } = storeToRefs(showStore);
 
+const route = useRoute();
+const router = useRouter();
+
 onMounted(() => {
+  showStore.initializeSearchInput(route);
   if (showStore.shows.length === 0) {
     showStore.fetchShows();
   }
 });
+
+const handleSearchInput = (event: Event) => {
+  const input = event.target as HTMLInputElement;
+  showStore.updateSearchInput(input.value, router);
+};
+const handleResetSearchInput = () => {
+  showStore.resetSearchInput(router);
+};
 </script>
 
 <template>
@@ -26,13 +39,13 @@ onMounted(() => {
     <div class="p-2 m-4 flex gap-2 border border-gray-300 rounded-xl">
       <input
         v-model="searchInput"
-        @input="(event) => showStore.updateSearchInput((event.target as HTMLInputElement)?.value)"
+        @input="handleSearchInput"
         type="text"
         placeholder="Search based on name or genre..."
         class="grow-1 outline-none border-none bg-transparent pl-1"
       />
       <button
-        @click="showStore.resetSearchInput()"
+        @click="handleResetSearchInput"
         type="button"
         aria-label="Clear search input"
         class="w-6 h-6 cursor-pointer hover:bg-black/10 rounded-full"

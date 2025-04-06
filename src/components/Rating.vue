@@ -10,15 +10,8 @@
 </template>
 
 <script lang="ts" setup>
-import { defineProps, defineComponent } from "vue";
-
-defineComponent({
-  name: "Rating",
-});
-
 defineProps<{
   value: number;
   size?: "small" | "large";
-  max?: number;
 }>();
 </script>

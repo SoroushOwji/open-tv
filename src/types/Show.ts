@@ -1,3 +1,44 @@
+export interface Rating {
+  average: number | null;
+}
+
+export interface Schedule {
+  time: string;
+  days: string[];
+}
+
+export interface Network {
+  id: number;
+  name: string;
+  country: {
+    name: string;
+    code: string;
+    timezone: string;
+  };
+  officialSite: string | null;
+}
+
+export interface Externals {
+  tvrage: number | null;
+  thetvdb: number | null;
+  imdb: string | null;
+}
+
+export interface Image {
+  medium: string;
+  original: string;
+}
+
+export interface Links {
+  self: {
+    href: string;
+  };
+  previousepisode?: {
+    href: string;
+    name: string;
+  };
+}
+
 export interface Show {
   id: number;
   url: string;
@@ -11,44 +52,15 @@ export interface Show {
   premiered: string | null;
   ended: string | null;
   officialSite: string | null;
-  schedule: {
-    time: string;
-    days: string[];
-  };
-  rating: {
-    average: number | null;
-  };
+  schedule: Schedule;
+  rating: Rating;
   weight: number;
-  network: {
-    id: number;
-    name: string;
-    country: {
-      name: string;
-      code: string;
-      timezone: string;
-    };
-    officialSite: string | null;
-  } | null;
+  network: Network | null;
   webChannel: null | unknown;
   dvdCountry: null | unknown;
-  externals: {
-    tvrage: number | null;
-    thetvdb: number | null;
-    imdb: string | null;
-  };
-  image: {
-    medium: string;
-    original: string;
-  } | null;
+  externals: Externals;
+  image: Image | null;
   summary: string | null;
   updated: number;
-  _links: {
-    self: {
-      href: string;
-    };
-    previousepisode?: {
-      href: string;
-      name: string;
-    };
-  };
+  _links: Links;
 }
