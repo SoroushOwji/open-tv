@@ -43,6 +43,7 @@ const handleResetSearchInput = () => {
         type="text"
         placeholder="Search based on name or genre..."
         class="grow-1 outline-none border-none bg-transparent pl-1"
+        aria-label="Search TV shows by name or genre"
       />
       <button
         v-if="searchInput"
@@ -54,13 +55,13 @@ const handleResetSearchInput = () => {
         &#x2715;
       </button>
     </div>
-    <div v-if="isLoading">
+    <div v-if="isLoading" aria-live="polite">
       <show-list loading title="Loading..." :list="[]" />
       <show-list loading title="Loading..." :list="[]" />
     </div>
-    <div v-else-if="error">{{ error }}</div>
+    <div v-else-if="error" aria-live="polite">{{ error }}</div>
     <div v-else>
-      <div v-if="filteredShows.length">
+      <div v-if="filteredShows.length" aria-live="polite">
         <show-list title="Search Results" :list="filteredShows" />
       </div>
       <div>

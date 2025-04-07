@@ -19,8 +19,8 @@ onMounted(() => {
 
 <template>
   <main class="min-h-screen">
-    <div v-if="error">{{ error }}</div>
-    <div v-else-if="!show">Loading...</div>
+    <div v-if="error" aria-live="polite">{{ error }}</div>
+    <div v-else-if="!show" aria-live="polite">Loading...</div>
     <div v-else class="relative grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4">
       <div
         class="fixed inset-0 bg-cover bg-center -z-1"
@@ -33,6 +33,7 @@ onMounted(() => {
       ></div>
       <article
         class="relative col-start-2 col-span-1 md:col-start-2 md:col-span-2 lg:col-start-2 lg:col-span-3 mx-4 p-8 bg-white/85 rounded-3xl dark:bg-black/85 dark:text-white top-[30vh]"
+        aria-live="polite"
       >
         <div>
           <button
@@ -54,6 +55,7 @@ onMounted(() => {
               :value="show.rating.average"
               size="large"
               class="mb-4"
+              aria-label="Show rating"
             ></rating>
           </div>
         </div>
