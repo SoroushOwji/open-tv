@@ -13,7 +13,12 @@ defineProps<{
     :to="`/${show.id}`"
     class="w-60 rounded-xl overflow-clip relative group cursor-pointer"
   >
-    <img width="240px" :src="show.image?.medium" :alt="show.name" />
+    <img
+      width="240px"
+      height="337px"
+      :src="show.image?.medium"
+      :alt="show.name"
+    />
 
     <div
       class="absolute p-4 inset-0 bg-white/80 dark:bg-black/80 bg-opacity-75 dark:text-white flex flex-col justify-center items-center opacity-0 group-hover:opacity-100 transition-opacity duration-300"
