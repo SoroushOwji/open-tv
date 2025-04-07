@@ -2,6 +2,10 @@
 
 Open TV is a modern web application built with Vue 3, TypeScript, and Vite. It allows users to browse TV shows, search for specific shows or genres, and view detailed information about each show. The application leverages Pinia for state management, Vue Router for navigation, and Tailwind CSS for styling.
 
+## Demo
+
+![Demo](demo.gif)
+
 ## Features
 
 - **Dark Mode**: Toggle between light and dark themes.

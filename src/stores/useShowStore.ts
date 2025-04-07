@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import { debounce } from "../utils";
 import type { Show } from "../types";
 import { type RouteLocationNormalizedLoaded, type Router } from "vue-router";
+import { fetchShowsAPI, fetchShowDetailAPI } from "../service";
 
 export const useShowStore = defineStore("useShowStore", {
   state: () => ({
@@ -27,11 +28,8 @@ export const useShowStore = defineStore("useShowStore", {
       this.error = null;
 
       try {
-        const response = await fetch("http://api.tvmaze.com/shows");
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        this.shows = await response.json();
+        const shows = await fetchShowsAPI();
+        this.shows = shows;
         this.genres = Array.from(
           new Set(this.shows.flatMap((show) => show.genres))
         );
@@ -55,11 +53,7 @@ export const useShowStore = defineStore("useShowStore", {
       this.showDetailError = null;
 
       try {
-        const response = await fetch(`http://api.tvmaze.com/shows/${id}`);
-        if (!response.ok) {
-          throw new Error(`Error: ${response.status} ${response.statusText}`);
-        }
-        this.showDetail = await response.json();
+        this.showDetail = await fetchShowDetailAPI(id);
       } catch (err) {
         this.showDetailError = err as Error;
       } finally {

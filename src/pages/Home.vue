@@ -45,6 +45,7 @@ const handleResetSearchInput = () => {
         class="grow-1 outline-none border-none bg-transparent pl-1"
       />
       <button
+        v-if="searchInput"
         @click="handleResetSearchInput"
         type="button"
         aria-label="Clear search input"
