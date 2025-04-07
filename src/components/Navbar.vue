@@ -27,7 +27,6 @@ onMounted(() => {
       </h1>
     </router-link>
     <label for="theme-toggle" class="flex items-center cursor-pointer px-4">
-      <span class="mr-3 text-sm"> </span>
       <div class="relative">
         <input
           type="checkbox"
@@ -35,6 +34,7 @@ onMounted(() => {
           class="sr-only"
           :checked="theme === 'dark'"
           @change="toggleTheme"
+          aria-label="Toggle between light and dark mode"
         />
         <div
           class="block bg-blue-200 dark:bg-blue-900 w-14 h-8 rounded-full"
